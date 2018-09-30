@@ -13,7 +13,7 @@ var storage map[int64]string
 func main() {
 	
 	storage = make(map[int64]string)
-	bot, err := tgbotapi.NewBotAPI("662527240:AAE13XzzPodFlzcpW-_mB-VxAxyfs2oxrcs")
+	bot, err := tgbotapi.NewBotAPI("")
 	if err != nil {
 		log.Panic(err)
 	}
