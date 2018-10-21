@@ -19,7 +19,7 @@ func main() {
 	memory = make(map[int64]string)
 	logCount = make(map[int64][]string)
 
-	bot, err := tgbotapi.NewBotAPI("662527240:AAE13XzzPodFlzcpW-_mB-VxAxyfs2oxrcs")
+	bot, err := tgbotapi.NewBotAPI("token")
 	if err != nil {
 		log.Panic(err)
 	}
