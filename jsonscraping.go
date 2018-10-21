@@ -104,6 +104,80 @@ func getRating(group string) string {
 	return fmt.Sprintf(resultString)
 }
 
+func getTeacherschedule(teacherName string) string {
+
+	link := "https://api.rozklad.org.ua/v2/teachers/" + teacherName + "/lessons"
+
+	response, _ := http.Get(link)
+	defer response.Body.Close()
+	contents, _ := ioutil.ReadAll(response.Body)
+
+	type GroupInfo struct{
+		Group_full_name string
+	}
+
+	type TeacherInfo struct{
+		Day_number    string
+		Lesson_number string
+		Lesson_name   string
+		Lesson_type   string
+		Lesson_room   string
+		Day_name      string
+		Lesson_week   string
+		Groups []GroupInfo
+	}
+
+	type Link struct {
+		Data []TeacherInfo
+	}
+
+	var getLink Link
+	json.Unmarshal([]byte(contents), &getLink)
+	jsonarray := getLink.Data
+
+	week := make(map[string]int)
+	week["1"] = 0
+	week["2"] = 0
+	week["3"] = 0
+	week["4"] = 0
+	week["5"] = 0
+	week["6"] = 0
+	
+
+	resultString := ""
+	check := 0
+
+	for i, _ := range jsonarray {
+		groups := ""
+		for j, _ := range jsonarray[i].Groups{
+			groups += jsonarray[i].Groups[j].Group_full_name + " "
+		}
+
+		if jsonarray[i].Lesson_week == "2" && check == 0{
+			week["1"] = 0
+			week["2"] = 0
+			week["3"] = 0
+			week["4"] = 0
+			week["5"] = 0
+			week["6"] = 0
+			check++
+			resultString+="\n"
+		}
+			
+
+		if week[jsonarray[i].Day_number] == 0{
+			resultString += fmt.Sprintf("*%s:*\n",jsonarray[i].Day_name)
+			week[jsonarray[i].Day_number] ++
+		}
+			
+		resultString+=fmt.Sprintf("%s) %s %s %s %s\n",jsonarray[i].Lesson_number, jsonarray[i].Lesson_name, jsonarray[i].Lesson_type,
+		jsonarray[i].Lesson_room, groups)
+	}
+
+	return resultString
+}
+
+
 func contains(arr []string, str string) bool {
 	for _, a := range arr {
 		if a == str {
